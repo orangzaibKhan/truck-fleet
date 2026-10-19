@@ -108,6 +108,13 @@ Add a **second** Website → Node.js web app, pointing at the same repo/archive.
 
 Click **Deploy**.
 
+**If you're on free temporary domains, the frontend's hostname is only assigned *after* you create
+this second app** — Hostinger picks it at creation time, you don't choose it. Go back and update
+the backend's `CORS_ORIGIN` to match the real assigned hostname once you know it (Environment
+Variables → edit → Apply changes, which redeploys automatically). A mismatch here fails silently
+in the UI as "Could not reach the backend" — check the browser console for the actual CORS error
+naming the mismatched origin before assuming the backend itself is down.
+
 ## 3. Verify end-to-end
 
 1. Open `https://app.yourdomain.com` — the public landing page should load.
