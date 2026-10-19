@@ -55,7 +55,7 @@ export async function runSeed(): Promise<void> {
 
 // CLI entrypoint (bun run / node dist/seed.js) - closes the pool after running,
 // unlike runSeed() itself, which server.ts calls on boot and must not close.
-if (process.argv[1]?.endsWith('seed.js') || process.argv[1]?.endsWith('seed.ts')) {
+if (process.argv[1]?.endsWith('seed.js') || process.argv[1]?.endsWith('seed.cjs') || process.argv[1]?.endsWith('seed.ts')) {
   runSeed()
     .then(() => pool.end())
     .catch((err) => {

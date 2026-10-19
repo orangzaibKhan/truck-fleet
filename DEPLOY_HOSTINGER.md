@@ -9,6 +9,17 @@ subdomains of the same domain:
 Requires Hostinger **Business Web Hosting** or any **Cloud** plan (Startup/Professional/Enterprise) —
 the Node.js App panel isn't available on basic shared hosting, and you don't need a VPS.
 
+**Deploy source options** (whichever the wizard offers): connecting GitHub grants Hostinger's
+GitHub App OAuth access to your repos (confirm that's okay first); pasting the **public repository
+URL** avoids that grant entirely and needs no further action; **uploading a .zip** works too but
+needs you to pick the file yourself from a native OS dialog (an automated browser session can't
+drive that part). All three land on the same build settings below.
+
+**If you're on a free Hostinger temporary domain** (`something.hostingersite.com`): you can't
+nest a third subdomain level (`api.something.hostingersite.com` is rejected as "too many subdomain
+levels"). Use two separate temporary domains instead — one per app — and set `CORS_ORIGIN` /
+`VITE_API_BASE_URL` to whichever two hostnames Hostinger actually assigns.
+
 ## 0. Before you start
 
 - **Get a domain pointed at Hostinger** (or use a Hostinger-provided subdomain) and decide the
@@ -33,9 +44,17 @@ upload an archive of `backend/`.
 | Application type | `fastify` (auto-detected from `package.json`) |
 | Root directory | `backend` (if deploying the whole repo) or `/` (if you zipped just the backend folder) |
 | Node.js version | **22** or **24** — `node:sqlite` needs Node ≥ 22.5; don't pick 18 or 20 |
-| Build script | `build` (runs the esbuild bundle → `dist/server.js`) |
+| Build script | `build` (runs the esbuild bundle → `dist/server.cjs`) |
 | Output directory | leave empty — Fastify deploys the whole root directory |
-| Entry file | `dist/server.js` |
+| Entry file | `dist/server.cjs` (**not** `.js` — see note below) |
+
+**Why `.cjs`, not `.js`:** Hostinger's Node.js hosting loads the entry file through LiteSpeed's
+`lsnode.js`, which calls plain CommonJS `require()` on it — it cannot load an ESM module that
+contains top-level `await` (`Error [ERR_REQUIRE_ASYNC_MODULE]`, confirmed live in Runtime Logs on
+a real deploy). The build (`package.json`) outputs CommonJS (`esbuild --format=cjs`), and the file
+extension is `.cjs` specifically (not `.js`) so Node treats it as CommonJS regardless of this
+package's own `"type": "module"` — `server.ts` is also written with no top-level `await` (wrapped
+in an async `main()`) so it stays `require()`-able either way.
 
 **Environment variables** (Environment variables tab):
 

@@ -34,7 +34,7 @@ export async function runMigrations(): Promise<void> {
 
 // CLI entrypoint (bun run / node dist/migrate.js) - closes the pool after running,
 // unlike runMigrations() itself, which server.ts calls on boot and must not close.
-if (process.argv[1]?.endsWith('migrate.js') || process.argv[1]?.endsWith('migrate.ts')) {
+if (process.argv[1]?.endsWith('migrate.js') || process.argv[1]?.endsWith('migrate.cjs') || process.argv[1]?.endsWith('migrate.ts')) {
   runMigrations()
     .then(() => pool.end())
     .catch((err) => {
