@@ -1,0 +1,248 @@
+@import 'leaflet/dist/leaflet.css';
+
+/* Design tokens - dataviz skill's validated default palette (dark mode column). */
+:root {
+  --page-plane: #0d0d0d;
+  --surface-1: #1a1a19;
+  --surface-2: #22221f;
+  --text-primary: #f0efec;
+  --text-secondary: #c3c2b7;
+  --text-muted: #898781;
+  --border-hairline: rgba(255, 255, 255, 0.1);
+  --gridline: #2c2c2a;
+
+  /* Categorical (fixed order, slots 1-4 for the four real trip-cycle stages) */
+  --cat-1-blue: #3987e5;
+  --cat-2-orange: #d95926;
+  --cat-3-aqua: #199e70;
+  --cat-4-yellow: #c98500;
+
+  /* Status (reserved, never reused as a category) */
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-critical: #d03b3b;
+
+  --radius: 8px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--page-plane);
+  color: var(--text-primary);
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2 {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.label-sm {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Mobile-first responsive layout for the dashboard. */
+.page {
+  padding: var(--space-5);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.status-grid {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.status-card {
+  flex: 1 1 120px;
+  min-width: 120px;
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  border: 1px solid var(--border-hairline);
+}
+
+.status-card .value {
+  font-size: 28px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.map-section {
+  height: 320px;
+  margin-bottom: var(--space-5);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border-hairline);
+}
+
+.truck-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.truck-tab {
+  padding: 10px var(--space-4); /* >=44px touch target height with line-height/font */
+  min-height: 44px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 550;
+  transition: background 0.12s ease;
+}
+
+.truck-tab:hover {
+  background: var(--surface-2);
+}
+
+.stats-row {
+  display: flex;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.scrub-input {
+  width: 100%;
+  min-height: 32px; /* easier touch dragging */
+  accent-color: var(--cat-1-blue);
+}
+
+.card {
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  border: 1px solid var(--border-hairline);
+}
+
+/* App shell: sidebar + content. Sidebar collapses above the content on mobile. */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5) var(--space-2);
+  border-right: 1px solid var(--border-hairline);
+  background: var(--surface-1);
+}
+
+.sidebar-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px var(--space-3);
+  min-height: 40px;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sidebar-link:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.sidebar-link[data-active='true'] {
+  background: var(--cat-1-blue);
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.sidebar-logout {
+  margin-top: var(--space-4);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-hairline);
+    padding: var(--space-2);
+    gap: 4px;
+  }
+  .sidebar > div:first-child {
+    display: none; /* hide the title block on mobile, just show nav links */
+  }
+  .sidebar-nav {
+    flex-direction: row;
+    flex: 0 0 auto;
+    gap: 4px;
+  }
+  .sidebar-link {
+    width: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sidebar-logout {
+    margin-top: 0;
+    margin-left: auto;
+  }
+  .content {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: var(--space-3);
+  }
+  .map-section {
+    height: 220px;
+  }
+  .status-card {
+    flex: 1 1 45%;
+  }
+}

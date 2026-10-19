@@ -1,0 +1,9 @@
+.env
+.env.production
+node_modules/
+dist/
+*.tmp.*
+backend/data/
+# vite-plugin-pwa's dev-mode service worker output - regenerated, not source.
+frontend/dev-dist/
+*.stackdump
