@@ -6,6 +6,7 @@ import { registerUserRoutes } from './routes/users';
 import { registerDriverRoutes } from './routes/drivers';
 import { registerFleetShiftRoute } from './routes/fleet-shift';
 import { registerDemoRequestRoute } from './routes/demo-requests';
+import { registerDriverAppRoutes } from './routes/driver-app';
 
 /** Builds the Fastify app without binding a port - used by server.ts and by tests (via .inject()). */
 export async function buildApp(): Promise<FastifyInstance> {
@@ -38,6 +39,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await registerDriverRoutes(app);
   await registerFleetShiftRoute(app);
   await registerDemoRequestRoute(app);
+  await registerDriverAppRoutes(app);
 
   return app;
 }

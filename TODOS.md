@@ -1,14 +1,14 @@
 # TODOs
 
-## Driver PWA view (deferred from prototype scope)
+## Driver PWA (built - see `frontend-driver/`)
 
-**What:** The driver-facing mobile/PWA view from the original fleet-monitoring spec — login, see assigned truck, start/end shift, status, submit inspection checklist.
+**What was deferred, now done:** The driver-facing mobile/PWA view from the original fleet-monitoring spec, built from a separate interactive HTML design prototype (`designs.html`, v1.3) the user brought in later: Login (Employee ID + password), Home (shift start/end, quick actions), Daily Inspection (15-item checklist), Active Trip (4-stage driver-advanced stepper), Fuel Log, Shift Handover modal, Driver Leaderboard, Trip History & Performance, simulated Supervisor Chat, simulated Live Map, Report Breakdown/Accident, Notifications, Profile. Full EN/AR + RTL. Its own installable PWA manifest, separate from the admin dashboard's.
 
-**Why deferred:** It doesn't demonstrate the prototype's one differentiated piece (trip-cycle detection + utilization math) to the person actually evaluating it (the friend). Building a second UI surface for a role (driver) nobody is testing yet is scope the prototype doesn't need to prove its point.
+**Scope decisions (explicitly chosen over the alternatives when this was built):** full 13-screen build in one pass (not staged by milestone); offline mode is demo-level (queues in memory, replays on "online" toggle) rather than real service-worker background sync; supervisor chat is simulated client-side (canned replies) - no WebSocket backend, no supervisor-side inbox in the admin dashboard.
 
-**Context:** Originally scoped as M3 in the approved design doc (`~/.gstack/projects/Claude/OK-design-20261019-002653.md`). Cut during `/plan-ceo-review`'s Scope Reduction pass (file count was already over the review's 15-file comfort threshold, and demand is still unvalidated beyond one person).
+**New backend surface:** `drivers` table extended with `employee_id`/`password_hash`/`truck_id`; new tables `shifts`, `inspections`, `driver_trips`, `fuel_logs`, `incident_reports` (migration `004_driver_app.sql`); routes in `backend/src/routes/driver-app.ts`. Driver-reported trip stage is a separate data source from the admin dashboard's simulated-telemetry stage inference (M1) - not unified, by design.
 
-**Depends on / blocked by:** A real driver or a real second customer — build it once one exists, not before.
+**Still not built:** real-time chat/websockets, a supervisor-side inbox, real offline-first sync (IndexedDB + background sync), photo upload (the photo-capture UI is a visual stub, no backend storage).
 
 ## Security hardening (before a second real customer or public exposure)
 

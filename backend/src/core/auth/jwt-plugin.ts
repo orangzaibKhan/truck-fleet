@@ -5,8 +5,11 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 export interface AuthUser {
   userId: string;
   customerId: string;
-  email: string;
-  role: 'super_admin' | 'customer_admin' | 'fleet_manager' | 'viewer';
+  // Admin users (email/password) and drivers (employee_id/password) share
+  // this token shape - exactly one of the two identifies who signed in.
+  email?: string;
+  employeeId?: string;
+  role: 'super_admin' | 'customer_admin' | 'fleet_manager' | 'viewer' | 'driver';
 }
 
 declare module '@fastify/jwt' {

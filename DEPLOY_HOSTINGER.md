@@ -115,7 +115,24 @@ Variables → edit → Apply changes, which redeploys automatically). A mismatch
 in the UI as "Could not reach the backend" — check the browser console for the actual CORS error
 naming the mismatched origin before assuming the backend itself is down.
 
-## 3. Verify end-to-end
+## 3. Driver app (`driver.yourdomain.com`) — separate PWA, optional
+
+A third, independent Web App for the driver-facing side (`frontend-driver/`) — its own installable
+PWA, same backend, same steps as the admin frontend above:
+
+| Field | Value |
+|---|---|
+| Application type | `vite` |
+| Root directory | `frontend-driver` |
+| Build script | `build` |
+| Output directory | `dist` |
+| Entry file | leave empty |
+
+Same `VITE_API_BASE_URL` environment variable, pointed at the backend app. Seeded demo drivers:
+`EMP-001` / `EMP-002` / `EMP-003`, password printed in the backend's Runtime Logs at first boot
+(`SEED_DRIVER_PASSWORD` to set it yourself instead).
+
+## 4. Verify end-to-end
 
 1. Open `https://app.yourdomain.com` — the public landing page should load.
 2. Click **Sign in**, log in with the seeded (or changed) credentials.
@@ -123,8 +140,10 @@ naming the mismatched origin before assuming the backend itself is down.
    the backend across the two subdomains with CORS correctly locked to `CORS_ORIGIN`.
 4. Try the **Install app** button (desktop Chrome/Edge or a real mobile browser — not the
    in-editor preview tool, which can't register a service worker).
+5. If deployed, open the driver app and sign in with `EMP-001` to confirm it reaches the same
+   backend independently of the admin frontend.
 
-## 4. Known deferred items (see `TODOS.md`)
+## 5. Known deferred items (see `TODOS.md`)
 
 Rate limiting on `/api/auth/login` and security-event logging are still not built — fine for a
 single demo customer, but flagged before a second real customer or any public exposure.

@@ -6,4 +6,5 @@ dist/
 backend/data/
 # vite-plugin-pwa's dev-mode service worker output - regenerated, not source.
 frontend/dev-dist/
+frontend-driver/dev-dist/
 *.stackdump
