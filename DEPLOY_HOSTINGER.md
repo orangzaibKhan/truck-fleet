@@ -62,7 +62,7 @@ in an async `main()`) so it stays `require()`-able either way.
 |---|---|
 | `JWT_SECRET` | the secret you generated in step 0 |
 | `DATABASE_FILE` | an **absolute path outside the app's own directory** — see note below, e.g. `/home/u123456789/fleet-data/app.db` |
-| `CORS_ORIGIN` | `https://app.yourdomain.com` (your frontend's real URL) |
+| `CORS_ORIGIN` | `https://app.yourdomain.com` (your frontend's real URL — comma-separate more than one, e.g. if you also deploy the driver app: `https://app.yourdomain.com,https://driver.yourdomain.com`) |
 
 Don't set `PORT` — Hostinger injects it, and `server.ts` already reads `process.env.PORT`.
 

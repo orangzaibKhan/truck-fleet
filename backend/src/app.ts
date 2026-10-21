@@ -12,11 +12,14 @@ import { registerDriverAppRoutes } from './routes/driver-app';
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({ logger: false });
 
-  // CORS_ORIGIN locks this down to the real frontend domain in production
-  // (set it in Hostinger's environment variables); unset (dev) reflects any
-  // origin, matching pre-deployment behavior. TODOS.md's "lock down CORS"
-  // gap, closed now that the real deployment topology (two subdomains) is known.
-  const corsOrigin = process.env.CORS_ORIGIN ?? true;
+  // CORS_ORIGIN locks this down to the real frontend domain(s) in production
+  // (set it in Hostinger's environment variables, comma-separated for more
+  // than one - the admin dashboard and the driver app are separate origins);
+  // unset (dev) reflects any origin, matching pre-deployment behavior.
+  // TODOS.md's "lock down CORS" gap, closed now that the real deployment
+  // topology is known.
+  const corsOriginEnv = process.env.CORS_ORIGIN;
+  const corsOrigin = corsOriginEnv ? corsOriginEnv.split(',').map((o) => o.trim()) : true;
   await app.register(cors, { origin: corsOrigin });
   await app.register(authPlugin);
 
