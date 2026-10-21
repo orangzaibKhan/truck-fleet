@@ -53,10 +53,13 @@ export async function registerUserRoutes(app: FastifyInstance): Promise<void> {
       }
 
       const passwordHash = await hashPassword(password);
+      // Stored lowercased so login's case-insensitive lookup (auth.ts) always matches,
+      // regardless of how the admin typed it here.
+      const normalizedEmail = email.trim().toLowerCase();
       try {
         const { rows } = await pool.query<UserRow>(
           'INSERT INTO users (customer_id, email, role, password_hash) VALUES ($1, $2, $3, $4) RETURNING id, email, role, created_at',
-          [customerId, email, role, passwordHash],
+          [customerId, normalizedEmail, role, passwordHash],
         );
         reply.code(201).send({ user: rows[0] });
       } catch (err) {

@@ -46,7 +46,17 @@ export default function Login({ onLoggedIn }: { onLoggedIn: (user: AuthUser) => 
           <label className="label-sm" style={{ display: 'block', marginBottom: 4 }}>
             Email
           </label>
-          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
+          <input
+            type="email"
+            required
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={inputStyle}
+          />
           <label className="label-sm" style={{ display: 'block', margin: '16px 0 4px' }}>
             Password
           </label>

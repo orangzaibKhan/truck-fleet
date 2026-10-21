@@ -19,9 +19,14 @@ export async function registerAuthRoutes(app: FastifyInstance): Promise<void> {
       return;
     }
 
+    // Emails are stored lowercased (see users.ts/seed.ts) - normalize the same
+    // way here so login isn't broken by a mobile keyboard's autocapitalize or
+    // any other casing difference. Trim stray whitespace for the same reason.
+    const normalizedEmail = email.trim().toLowerCase();
+
     const { rows } = await pool.query<UserRow>(
       'SELECT id, customer_id, email, role, password_hash FROM users WHERE email = $1',
-      [email],
+      [normalizedEmail],
     );
     const user = rows[0];
 
