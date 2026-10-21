@@ -2,15 +2,34 @@ import { pool } from './pool';
 import { hashPassword } from '../auth/password';
 
 /**
- * One-time bootstrap for the demo customer the friend will log in as.
- * Idempotent: safe to re-run (skips if the demo customer already exists).
+ * One-time bootstrap for the demo customer the friend will log in as, plus
+ * the driver-app demo roster. Two independent idempotent steps (not one
+ * early return) - the driver roster was added after the customer step had
+ * already run in some deployments, so it must be able to backfill on its
+ * own without re-running (or needing to delete) the customer/trucks/admin.
  * Exported so server.ts can run it on boot without closing the shared pool.
  */
 export async function runSeed(): Promise<void> {
+  const { customerId, fleetId, truckIds } = await seedDemoCustomer();
+  await seedDemoDrivers(customerId, fleetId, truckIds);
+}
+
+async function seedDemoCustomer(): Promise<{ customerId: string; fleetId: string; truckIds: Record<string, string> }> {
   const existing = await pool.query<{ id: string }>("SELECT id FROM customers WHERE name = 'Demo Fleet Co.'");
   if (existing.rows.length > 0) {
+    const customerId = existing.rows[0].id;
+    const { rows: fleetRows } = await pool.query<{ id: string }>(
+      'SELECT id FROM fleets WHERE customer_id = $1 ORDER BY created_at LIMIT 1',
+      [customerId],
+    );
+    const fleetId = fleetRows[0].id;
+    const { rows: truckRows } = await pool.query<{ id: string; truck_number: string }>(
+      'SELECT id, truck_number FROM trucks WHERE customer_id = $1',
+      [customerId],
+    );
+    const truckIds = Object.fromEntries(truckRows.map((t) => [t.truck_number, t.id]));
     console.log('Demo customer already seeded - skipping. Delete it manually first to reseed.');
-    return;
+    return { customerId, fleetId, truckIds };
   }
 
   const { rows: customerRows } = await pool.query<{ id: string }>(
@@ -49,11 +68,31 @@ export async function runSeed(): Promise<void> {
     passwordHash,
   ]);
 
-  // Driver-app demo roster, one driver per seeded truck. Same names as the
-  // leaderboard design's sample data, so the driver and admin dashboards
-  // reference the same people. EMP-001 (Ahmed) is the one meant to sign
-  // into the driver app for a demo; the other two exist so the leaderboard
-  // isn't a leaderboard of one.
+  console.log('Seeded demo customer, 3 trucks, and 1 admin user.');
+  console.log(`Admin login: ${email} / ${password}`);
+  console.log('(Password generated for this seed run - change it after first login, or set SEED_ADMIN_PASSWORD next time.)');
+
+  return { customerId, fleetId, truckIds };
+}
+
+/**
+ * Driver-app demo roster, one driver per seeded truck. Same names as the
+ * leaderboard design's sample data, so the driver and admin dashboards
+ * reference the same people. EMP-001 (Ahmed) is the one meant to sign into
+ * the driver app for a demo; the other two exist so the leaderboard isn't a
+ * leaderboard of one. Skips if any driver already has an employee_id for
+ * this customer - independent of whether the customer step above ran.
+ */
+async function seedDemoDrivers(customerId: string, fleetId: string, truckIds: Record<string, string>): Promise<void> {
+  const existing = await pool.query<{ id: string }>(
+    'SELECT id FROM drivers WHERE customer_id = $1 AND employee_id IS NOT NULL',
+    [customerId],
+  );
+  if (existing.rows.length > 0) {
+    console.log('Demo drivers already seeded - skipping.');
+    return;
+  }
+
   const driverPassword = process.env.SEED_DRIVER_PASSWORD ?? 'Driver-' + Math.random().toString(36).slice(2, 8);
   const driverPasswordHash = await hashPassword(driverPassword);
   const driverRoster = [
@@ -68,10 +107,9 @@ export async function runSeed(): Promise<void> {
     );
   }
 
-  console.log('Seeded demo customer, 3 trucks, 1 admin user, and 3 drivers.');
-  console.log(`Admin login: ${email} / ${password}`);
+  console.log('Seeded 3 demo drivers.');
   console.log(`Driver login (any of EMP-001 / EMP-002 / EMP-003): ${driverPassword}`);
-  console.log('(Passwords generated for this seed run - change them after first login, or set SEED_ADMIN_PASSWORD / SEED_DRIVER_PASSWORD next time.)');
+  console.log('(Password generated for this seed run - change it after first login, or set SEED_DRIVER_PASSWORD next time.)');
 }
 
 // CLI entrypoint (bun run / node dist/seed.js) - closes the pool after running,
