@@ -67,6 +67,7 @@ export default function Home({ ctx }: { ctx: AppCtx }) {
     { key: 'history', icon: '📜', label: ctx.t('qa_history') },
     { key: 'fuel', icon: '⛽', label: ctx.t('qa_fuel') },
     { key: 'leaderboard', icon: '🏆', label: ctx.t('qa_leaderboard') },
+    { key: 'workshop', icon: '⚙️', label: ctx.t('qa_workshop') },
   ];
 
   return (

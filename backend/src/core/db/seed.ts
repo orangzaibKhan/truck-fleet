@@ -12,6 +12,7 @@ import { hashPassword } from '../auth/password';
 export async function runSeed(): Promise<void> {
   const { customerId, fleetId, truckIds } = await seedDemoCustomer();
   await seedDemoDrivers(customerId, fleetId, truckIds);
+  await seedWorkshopDemoData(customerId, truckIds);
 }
 
 async function seedDemoCustomer(): Promise<{ customerId: string; fleetId: string; truckIds: Record<string, string> }> {
@@ -110,6 +111,72 @@ async function seedDemoDrivers(customerId: string, fleetId: string, truckIds: Re
   console.log('Seeded 3 demo drivers.');
   console.log(`Driver login (any of EMP-001 / EMP-002 / EMP-003): ${driverPassword}`);
   console.log('(Password generated for this seed run - change it after first login, or set SEED_DRIVER_PASSWORD next time.)');
+}
+
+/**
+ * Workshop & Parts demo data for DT-001 (Ahmed's truck) - gives the driver
+ * app something real to show on the Workshop tab: a scheduled service, one
+ * open ticket mid-pipeline with mixed-status parts, and a couple of closed
+ * service-history rows. Skips if workshop_tickets already has rows for this
+ * customer - independent of whether the customer/driver seed steps ran.
+ */
+async function seedWorkshopDemoData(customerId: string, truckIds: Record<string, string>): Promise<void> {
+  const existing = await pool.query<{ id: string }>('SELECT id FROM workshop_tickets WHERE customer_id = $1', [
+    customerId,
+  ]);
+  if (existing.rows.length > 0) {
+    console.log('Demo workshop data already seeded - skipping.');
+    return;
+  }
+
+  const truckId = truckIds['DT-001'];
+  if (!truckId) {
+    console.log('Demo workshop data skipped - DT-001 not found.');
+    return;
+  }
+
+  const daysFromNow = (n: number): string => new Date(Date.now() + n * 24 * 60 * 60 * 1000).toISOString();
+
+  await pool.query('UPDATE trucks SET next_service_type = $1, next_service_due = $2 WHERE id = $3', [
+    'Oil Change & Filter',
+    daysFromNow(3),
+    truckId,
+  ]);
+
+  const { rows: ticketRows } = await pool.query<{ id: string }>(
+    `INSERT INTO workshop_tickets (customer_id, truck_id, issue, status, opened_at)
+     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+    [customerId, truckId, 'Hydraulic lift slow response', 'parts', daysFromNow(-2)],
+  );
+  const ticketId = ticketRows[0].id;
+
+  const parts = [
+    { name: 'Hydraulic Pump Seal Kit', status: 'intransit', eta: daysFromNow(1) },
+    { name: 'Hydraulic Fluid 20L', status: 'arrived', eta: null },
+    { name: 'Filter Cartridge', status: 'ordered', eta: daysFromNow(4) },
+  ];
+  for (const part of parts) {
+    await pool.query('INSERT INTO workshop_parts (ticket_id, name, status, eta) VALUES ($1, $2, $3, $4)', [
+      ticketId,
+      part.name,
+      part.status,
+      part.eta,
+    ]);
+  }
+
+  const history = [
+    { serviceType: 'Brake Pad Replacement', cost: 1450, workshopName: 'Riyadh Truck Workshop', servicedAt: daysFromNow(-45) },
+    { serviceType: 'Oil Change & Filter', cost: 620, workshopName: 'Riyadh Truck Workshop', servicedAt: daysFromNow(-95) },
+    { serviceType: 'Tire Rotation', cost: 800, workshopName: 'Demo Fleet Co. Depot', servicedAt: daysFromNow(-140) },
+  ];
+  for (const h of history) {
+    await pool.query(
+      'INSERT INTO workshop_service_history (customer_id, truck_id, service_type, cost, workshop_name, serviced_at) VALUES ($1, $2, $3, $4, $5, $6)',
+      [customerId, truckId, h.serviceType, h.cost, h.workshopName, h.servicedAt],
+    );
+  }
+
+  console.log('Seeded workshop demo data for DT-001: 1 open ticket (3 parts), 3 service history rows.');
 }
 
 // CLI entrypoint (bun run / node dist/seed.js) - closes the pool after running,

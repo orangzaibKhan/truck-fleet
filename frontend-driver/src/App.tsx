@@ -15,6 +15,7 @@ import Fuel from './screens/Fuel';
 import Leaderboard from './screens/Leaderboard';
 import Notifications from './screens/Notifications';
 import Profile from './screens/Profile';
+import Workshop from './screens/Workshop';
 import BottomNav from './components/BottomNav';
 import HandoverModal from './components/HandoverModal';
 import InstallPrompt from './components/InstallPrompt';
@@ -173,6 +174,7 @@ export default function App() {
         {screen === 'leaderboard' && <Leaderboard ctx={ctx} />}
         {screen === 'notifications' && <Notifications ctx={ctx} />}
         {screen === 'profile' && <Profile ctx={ctx} />}
+        {screen === 'workshop' && <Workshop ctx={ctx} />}
         {showBottomNav && <BottomNav ctx={ctx} current={screen} unreadChat={unreadChat} />}
       </div>
 

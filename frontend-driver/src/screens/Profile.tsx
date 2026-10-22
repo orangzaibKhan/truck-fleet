@@ -39,6 +39,11 @@ export default function Profile({ ctx }: { ctx: AppCtx }) {
             <div style={{ flex: 1, fontSize: 13, fontWeight: 600 }}>{ctx.t('qa_leaderboard')}</div>
             <span>›</span>
           </div>
+          <div className="list-item" style={{ cursor: 'pointer' }} onClick={() => ctx.navigate('workshop')}>
+            <span>⚙️</span>
+            <div style={{ flex: 1, fontSize: 13, fontWeight: 600 }}>{ctx.t('qa_workshop')}</div>
+            <span>›</span>
+          </div>
         </div>
 
         <div className="section-label">{ctx.t('prof_prefs')}</div>

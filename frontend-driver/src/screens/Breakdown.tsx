@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { apiFetch } from '../auth';
+import VoiceRecorder from '../components/VoiceRecorder';
 import type { AppCtx } from '../types';
 
 export default function Breakdown({ ctx }: { ctx: AppCtx }) {
@@ -90,6 +91,8 @@ export default function Breakdown({ ctx }: { ctx: AppCtx }) {
             +
           </div>
         </div>
+        <div className="section-label">{ctx.t('voice_label')}</div>
+        <VoiceRecorder label={ctx.t('voice_label')} />
         <button className="btn btn-danger" style={{ marginTop: 18 }} disabled={submitting} onClick={submit}>
           {ctx.t('bd_submit')}
         </button>

@@ -48,6 +48,13 @@ export const dict = {
     alert1_t: 'Maintenance Due', alert1_b: 'Scheduled service coming up soon', alert3_t: 'Supervisor Message', alert3_b: 'Khalid: Please confirm your load weight',
     install_title: 'Install Fleet Monitor Driver', install_body: 'Add this app to your home screen for quick, offline-ready access.', install_btn: 'Install', install_dismiss: 'Not now',
     nav_home: 'Home', nav_trip: 'Trip', nav_map: 'Map', nav_alerts: 'Alerts', nav_profile: 'Profile',
+    qa_workshop: 'Workshop & Parts',
+    ws_title: 'Workshop & Parts', ws_next_service: 'Next Scheduled Service', ws_no_service: 'No service scheduled',
+    ws_ticket: 'Active Workshop Ticket', ws_no_ticket: 'No active workshop ticket', ws_opened: 'Opened',
+    ws_parts: 'Spare Parts Status', ws_history: 'Service History',
+    ws_note: 'View-only — contact your supervisor to request additional parts or service.',
+    ws_status_requested: 'Requested', ws_status_ordered: 'Ordered', ws_status_intransit: 'In Transit', ws_status_arrived: 'Arrived', ws_status_installed: 'Installed',
+    map_hazards_title: 'Road Hazards & Weather Alerts', voice_label: 'Voice Note',
   },
   ar: {
     login_title: 'فليت مونيتور', login_sub: 'بوابة دخول السائق', login_id: 'الرقم الوظيفي', login_pass: 'كلمة المرور', login_btn: 'تسجيل الدخول',
@@ -96,6 +103,13 @@ export const dict = {
     alert1_t: 'صيانة مستحقة', alert1_b: 'موعد الصيانة المجدول يقترب', alert3_t: 'رسالة من المشرف', alert3_b: 'خالد: يرجى تأكيد وزن الحمولة',
     install_title: 'تثبيت تطبيق فليت مونيتور للسائقين', install_body: 'أضف هذا التطبيق إلى الشاشة الرئيسية للوصول السريع وغير المتصل.', install_btn: 'تثبيت', install_dismiss: 'ليس الآن',
     nav_home: 'الرئيسية', nav_trip: 'الرحلة', nav_map: 'الخريطة', nav_alerts: 'التنبيهات', nav_profile: 'حسابي',
+    qa_workshop: 'الورشة والقطع',
+    ws_title: 'الورشة والقطع', ws_next_service: 'موعد الصيانة القادم', ws_no_service: 'لا توجد صيانة مجدولة',
+    ws_ticket: 'تذكرة الورشة النشطة', ws_no_ticket: 'لا توجد تذكرة ورشة نشطة', ws_opened: 'تم الفتح منذ',
+    ws_parts: 'حالة قطع الغيار', ws_history: 'سجل الصيانة',
+    ws_note: 'للعرض فقط — تواصل مع مشرفك لطلب قطع غيار أو صيانة إضافية.',
+    ws_status_requested: 'مطلوب', ws_status_ordered: 'تم الطلب', ws_status_intransit: 'في الطريق', ws_status_arrived: 'وصل', ws_status_installed: 'تم التركيب',
+    map_hazards_title: 'مخاطر الطريق وتنبيهات الطقس', voice_label: 'ملاحظة صوتية',
   },
 } as const;
 

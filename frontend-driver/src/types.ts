@@ -11,7 +11,8 @@ export type Screen =
   | 'fuel'
   | 'leaderboard'
   | 'notifications'
-  | 'profile';
+  | 'profile'
+  | 'workshop';
 
 export interface HomeData {
   driver: { id: string; name: string; employeeId: string };
@@ -48,6 +49,37 @@ export interface ActiveTrip {
   id: string;
   stage: 'loading' | 'traveling' | 'dumping' | 'returning' | 'completed';
   started_at: string;
+}
+
+export interface WorkshopPart {
+  id: string;
+  name: string;
+  status: string;
+  eta: string | null;
+}
+
+export interface WorkshopTicket {
+  id: string;
+  issue: string;
+  openedAt: string;
+  steps: string[];
+  currentStepIndex: number;
+  parts: WorkshopPart[];
+}
+
+export interface WorkshopHistoryEntry {
+  id: string;
+  serviceType: string;
+  cost: number;
+  workshopName: string;
+  servicedAt: string;
+}
+
+export interface WorkshopData {
+  truck: { id: string; truckNumber: string } | null;
+  nextService: { type: string; dueDate: string } | null;
+  ticket: WorkshopTicket | null;
+  history: WorkshopHistoryEntry[];
 }
 
 /** Context passed to every screen - the app shell's shared state and actions. */
