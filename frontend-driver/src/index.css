@@ -160,8 +160,9 @@ body.lang-ar { font-family: var(--font-ar); }
 
 .greet { font-size: 20px; font-weight: 800; }
 .truck-card { background: linear-gradient(135deg, var(--bg-elevated), var(--bg-card)); border: 1px solid var(--border-default); border-radius: var(--r-lg); padding: 16px; margin-top: 14px; }
-.quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.qa-item { display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 12px 4px; cursor: pointer; font-size: 10.5px; font-weight: 600; text-align: center; color: var(--text-secondary); }
+.quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.qa-item { display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--r-md); padding: 14px 8px; cursor: pointer; font-size: 10.5px; font-weight: 700; text-align: center; color: var(--text-secondary); transition: .15s; }
+.qa-item:hover { border-color: var(--accent); }
 .qa-item .ic { font-size: 20px; }
 
 .insp-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
